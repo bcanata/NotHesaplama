@@ -11,15 +11,24 @@
 
 <h2 class="text-2xl font-bold text-gray-800 mb-4">Öğrenci Toplam Not Hesaplama</h2>
 
+<div class="mb-4">
+  <button id="downloadBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    TXT Olarak İndir
+  </button>
+  <button id="clearTableBtn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">
+    Tabloyu Temizle
+  </button>
+</div>
+
 <div class="overflow-x-auto">
   <table id="scoresTable" class="table-auto w-full text-left whitespace-no-wrap">
     <tr class="text-gray-100 bg-gray-800">
-      <th class="px-4 py-2">Öğrenci No</th>
-      <th class="px-4 py-2">Öğrenci Adı Soyadı</th>
-      <th class="px-4 py-2">Yazılı</th>
-      <th class="px-4 py-2">Dinleme</th>
-      <th class="px-4 py-2">Konuşma</th>
-      <th class="px-4 py-2">Toplam Not</th>
+      <th class="px-4 py-3 border">Öğrenci No</th>
+      <th class="px-4 py-3 border">Öğrenci Adı Soyadı</th>
+      <th class="px-4 py-3 border w-32">Yazılı</th>
+      <th class="px-4 py-3 border w-32">Dinleme</th>
+      <th class="px-4 py-3 border w-32">Konuşma</th>
+      <th class="px-4 py-3 border w-32">Toplam Not</th>
     </tr>
   </table>
 </div>
@@ -72,11 +81,45 @@ document.addEventListener('DOMContentLoaded', function() {
     saveScores();
   }
 
+function downloadTableAsTxt() {
+  let txtContent = "Öğrenci No | Öğrenci Adı-Soyadı | Yazılı | Dinleme | Konuşma | Toplam\n";
+  // Iterate over table rows to construct the TXT content
+  for (let i = 1; i < table.rows.length; i++) {
+    let row = [...table.rows[i].cells].map(cell => cell.firstChild.value || cell.textContent);
+    txtContent += row.join(" | ") + "\n";
+  }
+  // Create a Blob with TXT content
+  const blob = new Blob([txtContent], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  // Create a temporary anchor to trigger the download
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "StudentScores.txt";
+  document.body.appendChild(a); // Append anchor to body
+  a.click(); // Trigger download
+  document.body.removeChild(a); // Clean up
+}
+
+// Function to clear table after confirmation
+function clearTable() {
+  if (confirm("Are you sure you want to clear the table? This action cannot be undone.")) {
+    localStorage.removeItem('scores'); // Clear stored data
+    while (table.rows.length > 1) {
+      table.deleteRow(1); // Delete all rows except the header
+    }
+    addRow(); // Add a blank row
+  }
+}
+
   table.addEventListener('input', () => {
     const lastRow = table.rows[table.rows.length - 1];
     const isLastRowFilled = [...lastRow.cells].slice(0, 5).some(cell => cell.firstChild.value);
     if (isLastRowFilled) addRow();
   });
+
+// Attach event listeners to buttons
+document.getElementById('downloadBtn').addEventListener('click', downloadTableAsTxt);
+document.getElementById('clearTableBtn').addEventListener('click', clearTable);
 
   loadScores();
 });
