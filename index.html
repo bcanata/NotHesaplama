@@ -13,7 +13,7 @@
 
 <div class="mb-4">
   <button id="downloadBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-    TXT Olarak İndir
+    Metin Dosyası Olarak İndir
   </button>
   <button id="clearTableBtn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">
     Tabloyu Temizle
@@ -23,12 +23,12 @@
 <div class="overflow-x-auto">
   <table id="scoresTable" class="table-auto w-full text-left whitespace-no-wrap">
     <tr class="text-gray-100 bg-gray-800">
-      <th class="px-4 py-3 border">Öğrenci No</th>
-      <th class="px-4 py-3 border">Öğrenci Adı Soyadı</th>
-      <th class="px-4 py-3 border w-32">Yazılı</th>
-      <th class="px-4 py-3 border w-32">Dinleme</th>
-      <th class="px-4 py-3 border w-32">Konuşma</th>
-      <th class="px-4 py-3 border w-32">Toplam Not</th>
+      <th class="px-4 py-3 border-2 border-black w-10">Öğrenci No</th>
+      <th class="px-4 py-3 border-2 border-black w-10">Öğrenci Adı Soyadı</th>
+      <th class="px-4 py-3 border-2 border-black w-10">Yazılı</th>
+      <th class="px-4 py-3 border-2 border-black w-10">Dinleme</th>
+      <th class="px-4 py-3 border-2 border-black w-10">Konuşma</th>
+      <th class="px-4 py-3 border-2 border-black w-10">Toplam Not</th>
     </tr>
   </table>
 </div>
@@ -56,15 +56,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function addRow(data = ['', '', '', '', '', '']) {
     const row = table.insertRow();
+    row.className = "border-2 border-black"; // Add Tailwind CSS class for border
     for (let i = 0; i < 6; i++) {
       const cell = row.insertCell();
+      cell.className = "px-4 py-3 border-2 border-black"; // Tailwind CSS classes for padding and border
       if (i < 5) {
         const input = document.createElement('input');
+        input.type = "text";
+        input.className = "w-full text-center"; // Tailwind CSS class for width and text alignment
+        //input.style.maxWidth = "100px"; // Set a maxWidth for the input for a more compact design
         input.value = data[i];
         input.oninput = calculateTotals;
         cell.appendChild(input);
       } else {
         cell.textContent = data[i]; // This will be recalculated anyway
+        cell.className += " w-32"; // Additional class for width
       }
     }
   }
@@ -94,7 +100,7 @@ function downloadTableAsTxt() {
   // Create a temporary anchor to trigger the download
   const a = document.createElement('a');
   a.href = url;
-  a.download = "StudentScores.txt";
+  a.download = "Notlar.txt";
   document.body.appendChild(a); // Append anchor to body
   a.click(); // Trigger download
   document.body.removeChild(a); // Clean up
@@ -102,7 +108,7 @@ function downloadTableAsTxt() {
 
 // Function to clear table after confirmation
 function clearTable() {
-  if (confirm("Are you sure you want to clear the table? This action cannot be undone.")) {
+  if (confirm("Tabloyu silmek istediğinizden emin misiniz? Verileri kaydetmediyseniz TAMAMEN silinecek.")) {
     localStorage.removeItem('scores'); // Clear stored data
     while (table.rows.length > 1) {
       table.deleteRow(1); // Delete all rows except the header
