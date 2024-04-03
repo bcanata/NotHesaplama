@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Exam Scores</title>
+<style>
+  table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 8px;
+    text-align: left;
+  }
+</style>
+</head>
+<body>
+
+<h2>Student Exam Scores</h2>
+
+<table id="scoresTable">
+  <tr>
+    <th>Student ID</th>
+    <th>Student Name</th>
+    <th>Exam 1</th>
+    <th>Exam 2</th>
+    <th>Exam 3</th>
+    <th>Total</th>
+  </tr>
+</table>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const table = document.getElementById('scoresTable');
+
+  function loadScores() {
+    const scores = JSON.parse(localStorage.getItem('scores')) || [];
+    scores.forEach(score => addRow(score));
+    if (!scores.length || scores[scores.length - 1].some(v => v)) addRow(); // Add blank row if last is filled
+  }
+
+  function saveScores() {
+    const scores = [];
+    for (let i = 1; i < table.rows.length; i++) {
+      const row = table.rows[i];
+      const score = [...row.cells].slice(0, 5).map(cell => cell.firstChild.value || '');
+      if (score.some(v => v)) scores.push(score);
+    }
+    localStorage.setItem('scores', JSON.stringify(scores));
+  }
+
+  function addRow(data = ['', '', '', '', '', '']) {
+    const row = table.insertRow();
+    for (let i = 0; i < 6; i++) {
+      const cell = row.insertCell();
+      if (i < 5) {
+        const input = document.createElement('input');
+        input.value = data[i];
+        input.oninput = calculateTotals;
+        cell.appendChild(input);
+      } else {
+        cell.textContent = data[i];
+      }
+    }
+  }
+
+  function calculateTotals() {
+    for (let i = 1; i < table.rows.length; i++) {
+      const row = table.rows[i];
+      const exam1 = parseFloat(row.cells[2].firstChild.value) || 0;
+      const exam2 = parseFloat(row.cells[3].firstChild.value) || 0;
+      const exam3 = parseFloat(row.cells[4].firstChild.value) || 0;
+      const total = (exam1 * 0.5) + (exam2 * 0.25) + (exam3 * 0.25);
+      row.cells[5].textContent = total.toFixed(2);
+    }
+    saveScores();
+  }
+
+  table.addEventListener('input', () => {
+    const lastRow = table.rows[table.rows.length - 1];
+    const isLastRowFilled = [...lastRow.cells].slice(0, 5).some(cell => cell.firstChild.value);
+    if (isLastRowFilled) addRow();
+  });
+
+  loadScores();
+});
+</script>
+</body>
+</html>
