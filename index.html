@@ -4,31 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Student Exam Scores</title>
-<style>
-  table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-  }
-  th, td {
-    padding: 8px;
-    text-align: left;
-  }
-</style>
+<!-- Include Tailwind CSS from CDN -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-gray-100 p-5">
 
-<h2>Student Exam Scores</h2>
+<h2 class="text-2xl font-bold text-gray-800 mb-4">Student Exam Scores</h2>
 
-<table id="scoresTable">
-  <tr>
-    <th>Student ID</th>
-    <th>Student Name</th>
-    <th>Exam 1</th>
-    <th>Exam 2</th>
-    <th>Exam 3</th>
-    <th>Total</th>
-  </tr>
-</table>
+<div class="overflow-x-auto">
+  <table id="scoresTable" class="table-auto w-full text-left whitespace-no-wrap">
+    <tr class="text-gray-100 bg-gray-800">
+      <th class="px-4 py-2">Student ID</th>
+      <th class="px-4 py-2">Student Name</th>
+      <th class="px-4 py-2">Exam 1</th>
+      <th class="px-4 py-2">Exam 2</th>
+      <th class="px-4 py-2">Exam 3</th>
+      <th class="px-4 py-2">Total</th>
+    </tr>
+  </table>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
