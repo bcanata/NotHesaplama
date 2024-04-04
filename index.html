@@ -34,6 +34,15 @@
   </table>
 </div>
 
+<!-- Explanation Box Below the Table -->
+<div class="mt-8 p-4 bg-white shadow-md rounded">
+  <h3 class="text-lg font-semibold text-gray-800 mb-2">Kullanım Talimatları</h3>
+  <p class="text-gray-600">
+      Bu uygulama; uygulamalı dersler için öğrencilerin yazılı, konuşma ve dinleme notlarını hesaplamak ve birleştirmek için hazırlanmıştır. Yazılı notunun <b>%50</b>'si, dinleme ve konuşma notlarının ise ayrı ayrı <b>%25</b>'i hesaplanarak toplama yapılır. Girilen tüm bilgiler girdiğiniz cihaza doğrudan kayıt edilmektedir. Ayrıca PDF olarak da indirip kayıt edebilirsiniz. kullanılabilir. Giriş yaptıkça aşağıda yeni satır açılacak, toplam not otomatik olarak hesaplanacak ve güncellenecektir. <b>Tabloyu Temizle</b> butonu ile tablonun tümünü silebilirsiniz. Eğer kayıt almadıysanız bu bilgiler geri getirilemeyecek şekilde silinecektir.
+  </p>
+</div>
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const table = document.getElementById('scoresTable');
@@ -87,6 +96,26 @@ function calculateTotals() {
   }
   saveScores();
 }
+  
+function downloadTableAsTxt() {
+  let txtContent = "Öğrenci No | Öğrenci Adı-Soyadı | Yazılı | Dinleme | Konuşma | Toplam\n";
+  // Iterate over table rows to construct the TXT content
+  for (let i = 1; i < table.rows.length; i++) {
+    let row = [...table.rows[i].cells].map(cell => cell.firstChild.value || cell.textContent);
+    txtContent += row.join(" | ") + "\n";
+  }
+  // Create a Blob with TXT content
+  const blob = new Blob([txtContent], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  // Create a temporary anchor to trigger the download
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "Notlar.txt";
+  document.body.appendChild(a); // Append anchor to body
+  a.click(); // Trigger download
+  document.body.removeChild(a); // Clean up
+}
+
 function downloadTableAsPdf() {
     html2canvas(document.querySelector("#scoresTable")).then(canvas => {
         // Convert the canvas to an image
@@ -132,6 +161,7 @@ function clearTable() {
   });
 
 // Attach event listeners to buttons
+//document.getElementById('downloadBtn').addEventListener('click', downloadTableAsTxt);
 document.getElementById('downloadBtn').addEventListener('click', downloadTableAsPdf);
 document.getElementById('clearTableBtn').addEventListener('click', clearTable);
 
